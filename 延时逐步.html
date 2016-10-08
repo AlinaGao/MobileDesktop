@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html style="font-size: 20px;">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,user-scalable=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="x5-orientation" content="portrait">
+		<meta name="x5-fullscreen" content="true">
+		<meta name="screen-orientation" content="portrait">
+		<meta name="full-screen" content="yes">
+		<title>手机图片3D切换</title>
+		<style id="css">
+		
+		@keyframes rotateplance{
+			0% {
+				transform:perspective(120px) rotateX(0deg) rotateY(0deg);
+			}
+			50% {
+				transform:perspective(120px) rotateX(-180deg) rotateY(0deg);
+			}
+			100% {
+				transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+			}
+		}
+		@-webkit-keyframes rotateplance{
+			0% {
+				-webkit-transform:perspective(120px) rotateX(0deg) rotateY(0deg);
+			}
+			50% {
+				-webkit-transform:perspective(120px) rotateX(-180deg) rotateY(0deg);
+			}
+			100% {
+				-webkit-transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+			}
+		}
+		ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		html{height:100%;}
+		body{
+			margin:0;
+			height:100%; 
+			position:relative; 
+			overflow:hidden; 
+			background:#000;
+		}
+		header,footer{ 
+			position: absolute;
+			left: 0;
+			right: 0; 
+			top: 0; 
+			line-height: 40px; 
+			color: #fff;
+			background: rgba(0,0,0,.2); 
+			font-size: 16px; 
+			text-align: center;
+			box-shadow: 0 0 5px rgba(0, 0, 0, .8);
+			z-index:3;
+		}
+		footer {
+			bottom:0;
+			top:auto;
+		}
+		
+		#wrap, #loading {
+			width: 16rem;
+			position: absolute;
+			left: 0;
+			top: 40px;
+			bottom: 40px;
+			-webkit-perspective: 1200px;
+			perspective: 1200px;
+			z-index: 1;
+		}
+		
+		#loading {
+			-webkit-perspective: 180px;
+			perspective: 180px;
+			z-index:2;
+			background:#000;	
+		}
+		#load {
+			width: 100px;
+			height: 100px;
+			background: #fff;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin: -50px 0 0 -50px;
+			-webkit-animation: rotateplance 1s infinite ease-in-out;
+			animation: rotateplance 1s infinite ease-in-out;
+		}
+		#imgList {
+			width: 16rem;
+			height: 100%;
+			position: relative;
+			z-index: 1;
+		}
+		#imgList li {
+			width: 4rem;
+			float: left;
+			-webkit-perspective: 300px;
+			perspective: 300px;
+			/*height: 100px;*/   /*测试高度*/
+		}
+		/*#imgList:active .div{
+			transform: rotateY(360deg);
+		}*/
+		#navs {
+			width: 100%;
+			height: 12px;
+			padding: 10px 0;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			background: rgba(255, 255, 255, .4);
+			box-shadow: 0 0 5px rgba(255, 255, 255, .7);
+			z-index: 5;
+			text-align: center;
+		}
+		#navs a {
+			width: 12px;
+			height: 12px;
+			background: #fff;
+			display: inline-block;
+			margin: 0 8px;
+			vertical-align: top;
+		}
+		#navs .active {
+			background: #f90;
+		}	
+		
+			.div{
+				width: 4rem;
+				height: 100%;
+				transition: 1s;
+				transform-style: preserve-3d;
+				-webkit-transform-style: preserve-3d;
+				position: relative;
+				transform-origin: center center -2rem;
+				-webkit-transform-origin: center center -2rem;	
+			}
+			.div div{
+				width: 4rem;
+				height: 100%;
+				position: absolute;
+				left: 4rem;
+				top: 0;
+				transform-style: preserve-3d;
+				transform-origin: left;
+				transform: rotateY(90deg);
+			}
+			.div>div{
+				left: 0;
+				transform: rotateY(0deg);
+			}
+			.div span{
+				width: 100%;
+				height: 100%;
+				display: block;
+				background-size: 16rem auto;
+			}
+		
+		</style>
+		<script type="text/javascript" src="js/touch.js" ></script>
+		<script>
+			var imgUrls = ["img/img1.jpeg","img/img2.jpeg","img/img3.jpeg","img/img4.jpeg"];
+			
+			window.onload = function(){
+				
+				setLayout();
+				
+				var list = id("imgList"); 
+				var boxs = list.getElementsByClassName("div");
+				var navs = id("navs").getElementsByTagName("a");
+				var now = 0;
+				var timer = 0;
+				
+				$(list).swipeLeft(function(){
+					now++;
+					var i = 0;
+					timer = setInterval(function(){
+						if(i==3){
+							clearInterval(timer);
+						}
+//						console.log(i);
+						tabImg(i*4, (i+1)*4-1, 1);
+//						tabImg((i+1)*4-1, i*4, -1);
+//						tabImg(0,3,dis);
+//						tabImg(4,7,dis);
+//						tabImg(8,11,dis);
+//						tabImg(12,15,dis);
+						i++;
+					},80);
+//					for(var i=0; i<boxs.length; i++){
+//						boxs[i].style.webkitTransform = boxs[i].style.transform ="rotateY(" + -now*90 + "deg)";
+//						//"rotateY(-" + now*90 + "deg)"
+//					}
+					tabNav();
+				});
+				
+				function tabImg(start,end,dis){
+					var timer2 = 0;
+					timer2 = setInterval(function(){
+						if(start==end){
+							clearInterval(timer2);
+						}
+						boxs[start].style.webkitTransform = boxs[start].style.transform ="rotateY(" + -now*90 + "deg)";
+						start += dis;
+					},90);
+				}
+				
+				$(list).swipeRight(function(){
+					now--;
+					var i = 0;
+					timer = setInterval(function(){
+						if(i==3){
+							clearInterval(timer);
+						}
+						tabImg((i+1)*4-1, i*4, -1);
+
+						i++;
+					},80);
+					
+//					for(var i=0; i<boxs.length; i++){
+//						boxs[i].style.webkitTransform = boxs[i].style.transform ="rotateY(" + -now*90 + "deg)";
+//						//"rotateY(-" + now*90 + "deg)"
+//					}
+					tabNav();
+				});
+				
+				function tabNav(){
+					var show = now%4;
+					show = show<0?show+navs.length:show;
+					for (var i=0; i<navs.length; i++) {
+						navs[i].className = "";		//先清空所有的
+					}
+					navs[show].className = "active";		//再加上当前的
+				}
+			};
+			
+			function id(idName){
+				return document.getElementById(idName);
+			};
+			
+			function setLayout(){
+				var list = id("imgList"); 
+				var css = id("css"); 
+				var li = list.children;
+				var str = "";
+				var liH = list.clientHeight/4; 
+				
+				for(var i=0; i<16; i++){
+					str += '<li><div class="div"><div><span></span><div><span></span><div><span></span><div><span></span></div></div></div></div></div></li>';
+				}
+				list.innerHTML = str;
+//				console.log(li.length);
+				css.innerHTML += "#imgList li{height:" + liH + "px}";
+				for(var i=0; i<li.length; i++ ){
+					var spans = li[i].getElementsByTagName("span");
+					for(var j=0; j<spans.length; j++){
+						spans[j].style.backgroundImage = "url(" + imgUrls[j] + ")";
+						spans[j].style.backgroundPosition = -(i%4)*4 + "rem -" + parseInt(i/4)*liH + "px";
+						/*
+						 x:i%4;
+						 y:parseInt(i/4)
+						 0(0,0) 1(1,0) 2(2,0) 3(3,0)
+						 4(0,1) 5(1,1) 6(2,1) 7(3,1)
+						 * */
+					}
+				}
+			};
+			
+		</script>
+	</head>
+	<body>
+		<header>手机图片3D场景切换</header>
+		<div id="loading" style="display: none;">
+			<div id="load"></div>
+		</div>
+		<div id="wrap">
+			<ul id="imgList">
+				<li>
+					<div class="div">
+						<div>
+							<span></span>
+							<div>
+								<span></span>
+								<div>
+									<span></span>
+									<div>
+										<span></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<nav id="navs">
+				<a href="javascript:;" class="active"></a>
+				<a href="javascript:;"></a>
+				<a href="javascript:;"></a>
+				<a href="javascript:;"></a>
+			</nav>
+		</div>
+		<footer>手机图片3D场景切换</footer>
+	</body>
+</html>
